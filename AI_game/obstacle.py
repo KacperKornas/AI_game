@@ -3,12 +3,14 @@ import pygame
 
 class Obstacle:
     def __init__(self, x, y, radius, screen_width, screen_height):
+        # Initialize obstacle attributes
         self.x = x
         self.y = y
         self.radius = radius
-        self.color = (0, 0, 255)
+        self.color = (0, 128, 0)
         self.screen_width = screen_width
         self.screen_height = screen_height
 
     def draw(self, screen):
+        # Draw the obstacle as a green circle on the screen
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius)

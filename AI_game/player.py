@@ -3,6 +3,7 @@ import pygame
 
 class Player:
     def __init__(self, x, y, screen_width, screen_height):
+        # Initialize player attributes
         self.radius = 16
         self.x = int(x)
         self.y = int(y)
@@ -18,9 +19,11 @@ class Player:
         self.screen_height = screen_height
 
     def draw(self, screen):
+        # Draw the player as a circle on the screen
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius)
 
     def update(self):
+        # Update player position and handle movement
         self.velX = 0
         self.velY = 0
         if self.left_pressed and not self.right_pressed:
@@ -35,5 +38,6 @@ class Player:
         self.x += self.velX
         self.y += self.velY
 
+        # Ensure the player stays within the screen boundaries
         self.x = max(self.radius, min(self.x, self.screen_width - self.radius))
         self.y = max(self.radius, min(self.y, self.screen_height - self.radius))
