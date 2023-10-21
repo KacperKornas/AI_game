@@ -6,7 +6,7 @@ class Player:
         self.radius = 16
         self.x = int(x)
         self.y = int(y)
-        self.color = (255, 102, 193)
+        self.color = (255, 72, 193)
         self.velX = 0
         self.velY = 0
         self.left_pressed = False
@@ -37,11 +37,3 @@ class Player:
 
         self.x = max(self.radius, min(self.x, self.screen_width - self.radius))
         self.y = max(self.radius, min(self.y, self.screen_height - self.radius))
-        # new_x = self.x + self.velX
-        # new_y = self.y + self.velY
-
-        # if 0 <= new_x - self.radius <= self.screen_width:
-        #     self.x = new_x
-        # if 800 <= new_y - self.radius <= self.screen_height:
-        #     self.y = new_y
-

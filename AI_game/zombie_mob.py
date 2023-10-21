@@ -1,5 +1,7 @@
 import pygame
+from obstacle import Obstacle
 from player import Player
+
 
 pygame.init()
 
@@ -10,6 +12,11 @@ clock = pygame.time.Clock()
 black = (0, 0, 0)
 
 player = Player(WIDTH/2, HEIGHT/2, WIDTH, HEIGHT)
+
+obstacle_positions = [(140, 140), (650, 600), (500, 300), (700, 100), (190, 480), (700, 300), (400, 150), (300, 700)]
+obstacle_radius = [100, 80, 70, 50, 60, 40, 50, 70]
+
+obstacles = [Obstacle(x, y, radius, WIDTH, HEIGHT) for (x, y), radius in zip(obstacle_positions, obstacle_radius)]
 
 running = True
 while running:
@@ -38,6 +45,9 @@ while running:
                 player.down_pressed = False
 
     screen.fill(black)
+
+    for obstacle in obstacles:
+        obstacle.draw(screen)
 
     player.update()
     player.draw(screen)
