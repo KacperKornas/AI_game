@@ -1,6 +1,8 @@
 import pygame
 from obstacle import Obstacle
 from player import Player
+from control import Control
+from colision import CollisionDetection
 
 
 pygame.init()
@@ -18,44 +20,18 @@ obstacle_radius = [100, 80, 70, 50, 60, 40, 50, 70]
 
 obstacles = [Obstacle(x, y, radius, WIDTH, HEIGHT) for (x, y), radius in zip(obstacle_positions, obstacle_radius)]
 
+control = Control(player, obstacles, WIDTH, HEIGHT)
+collision_detection = CollisionDetection(player, obstacles)
+
 running = True
+
+
 while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                player.left_pressed = True
-            if event.key == pygame.K_RIGHT:
-                player.right_pressed = True
-            if event.key == pygame.K_UP:
-                player.up_pressed = True
-            if event.key == pygame.K_DOWN:
-                player.down_pressed = True
-
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
-                player.left_pressed = False
-            if event.key == pygame.K_RIGHT:
-                player.right_pressed = False
-            if event.key == pygame.K_UP:
-                player.up_pressed = False
-            if event.key == pygame.K_DOWN:
-                player.down_pressed = False
+    running = control.handle_events()
 
     screen.fill(black)
 
-    for obstacle in obstacles:
-        distance = pygame.math.Vector2(obstacle.x - player.x, obstacle.y - player.y)
-        if distance.length() < obstacle.radius + player.radius:
-            # Kolizja między graczem a przeszkodą, unikamy aktualizacji pozycji gracza
-            overlap = (obstacle.radius + player.radius) - distance.length()
-            if distance.length() != 0:
-                overlap_vector = distance.normalize() * overlap
-                player.x -= overlap_vector.x
-                player.y -= overlap_vector.y
-
+    collision_detection.detect_collisions()
 
     for obstacle in obstacles:
         obstacle.draw(screen)
