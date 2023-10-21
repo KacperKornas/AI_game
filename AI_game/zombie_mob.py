@@ -47,6 +47,17 @@ while running:
     screen.fill(black)
 
     for obstacle in obstacles:
+        distance = pygame.math.Vector2(obstacle.x - player.x, obstacle.y - player.y)
+        if distance.length() < obstacle.radius + player.radius:
+            # Kolizja między graczem a przeszkodą, unikamy aktualizacji pozycji gracza
+            overlap = (obstacle.radius + player.radius) - distance.length()
+            if distance.length() != 0:
+                overlap_vector = distance.normalize() * overlap
+                player.x -= overlap_vector.x
+                player.y -= overlap_vector.y
+
+
+    for obstacle in obstacles:
         obstacle.draw(screen)
 
     player.update()
