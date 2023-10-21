@@ -1,5 +1,6 @@
 import pygame
 
+
 class Player:
     def __init__(self, x, y, screen_width, screen_height):
         self.radius = 16
@@ -33,4 +34,14 @@ class Player:
 
         self.x += self.velX
         self.y += self.velY
+
+        self.x = max(self.radius, min(self.x, self.screen_width - self.radius))
+        self.y = max(self.radius, min(self.y, self.screen_height - self.radius))
+        # new_x = self.x + self.velX
+        # new_y = self.y + self.velY
+
+        # if 0 <= new_x - self.radius <= self.screen_width:
+        #     self.x = new_x
+        # if 800 <= new_y - self.radius <= self.screen_height:
+        #     self.y = new_y
 
