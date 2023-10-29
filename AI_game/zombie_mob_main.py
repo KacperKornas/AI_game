@@ -2,6 +2,7 @@
 import pygame
 from obstacle import Obstacle
 from player import Player
+from enemy import Enemy
 from control import Control
 from collision import CollisionDetection
 
@@ -23,6 +24,10 @@ obstacle_positions = [(140, 140), (650, 600), (500, 300),
                       (400, 150), (300, 700)]
 obstacle_radius = [100, 80, 70, 50, 60, 40, 50, 70]
 
+enemies = [
+    Enemy(WIDTH / 3, HEIGHT / 3, 5, WIDTH, HEIGHT)
+]
+
 # Create obstacle objects based on the previously defined positions and sizes
 obstacles = [Obstacle(x, y, radius, WIDTH, HEIGHT) for (x, y), radius in zip(obstacle_positions, obstacle_radius)]
 
@@ -40,6 +45,10 @@ while running:
     running = control.handle_events()  # Handle events, such as player movement
 
     screen.fill(black)  # Clear the screen with the background color
+    
+    for enemy in enemies:
+        enemy.update()
+        enemy.draw(screen)
 
     collision_detection.detect_collisions()  # Detect collisions between the player and obstacles
 
@@ -48,6 +57,7 @@ while running:
 
     player.update()  # Update the player's position
     player.draw(screen)  # Draw the player on the screen
+    
 
     pygame.display.flip()  # Refresh the screen
 

@@ -1,6 +1,5 @@
 import pygame
 from pygame.math import Vector2
-import math
 
 
 class Player:
@@ -8,7 +7,6 @@ class Player:
         # Initialize player attributes
         self.pos = Vector2(x, y)
         self.size = 16
-        self.rotation = 0
         self.color = (255, 72, 193)
         self.vel = Vector2(0, 0)
         self.left_pressed = False
@@ -25,7 +23,7 @@ class Player:
                          direction.rotate(120) * self.size + self.pos]
 
     def draw(self, screen):
-        self.image = pygame.draw.polygon(screen, self.color, self.vertices)
+        pygame.draw.polygon(screen, self.color, self.vertices)
         pygame.draw.line(screen, pygame.Color(255, 1, 1, 0), self.pos, self.vertices[0], 2)
         pygame.draw.line(screen, pygame.Color(0, 255, 0, 0), self.pos, pygame.mouse.get_pos(), 2) # player pointing vector
 
