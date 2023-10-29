@@ -1,12 +1,13 @@
 import pygame
 from pygame.math import Vector2
+import math
 
 
 class Player:
     def __init__(self, x, y, screen_width, screen_height):
         # Initialize player attributes
         self.pos = Vector2(x, y)
-        self.size = 12
+        self.size = 16
         self.rotation = 0
         self.color = (255, 72, 193)
         self.vel = Vector2(0, 0)
@@ -17,13 +18,18 @@ class Player:
         self.speed = 4
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.vertices = [self.pos + (0, -self.size), self.pos + (-self.size, self.size), self.pos + (self.size, self.size)]
+        
+        direction = (pygame.mouse.get_pos() - self.pos).normalize()
+        self.vertices = [direction * self.size + self.pos, 
+                         direction.rotate(-120) * self.size + self.pos, 
+                         direction.rotate(120) * self.size + self.pos]
 
     def draw(self, screen):
-        pygame.draw.polygon(screen, self.color, self.vertices)
+        self.image = pygame.draw.polygon(screen, self.color, self.vertices)
+        pygame.draw.line(screen, pygame.Color(255, 1, 1, 0), self.pos, self.vertices[0], 2)
+        pygame.draw.line(screen, pygame.Color(0, 255, 0, 0), self.pos, pygame.mouse.get_pos(), 2) # player pointing vector
 
     def update(self):
-        # Update player position and handle movement
         self.vel = Vector2(0, 0)
         
         if self.left_pressed and not self.right_pressed:
@@ -35,15 +41,13 @@ class Player:
         if self.down_pressed and not self.up_pressed:
             self.vel[1] = self.speed
 
-        # self.x += self.velX
-        # self.y += self.velY
         self.pos += self.vel
-        print(pygame.mouse.get_pos() - self.pos)
 
-        # Ensure the player stays within the screen boundaries
-        # self.x = max(self.size, min(self.x, self.screen_width - self.size))
-        # self.y = max(self.size, min(self.y, self.screen_height - self.size))
         self.pos[0] = max(self.size, min(self.pos[0], self.screen_width - self.size))
         self.pos[1] = max(self.size, min(self.pos[1], self.screen_height - self.size))
-        # self.vertices = [(self.x, self.y - self.size), (self.x - self.size, self.y + self.size), (self.x + self.size, self.y + self.size)]
-        self.vertices = [self.pos + (0, -self.size), self.pos + (-self.size, self.size), self.pos + (self.size, self.size)]
+        
+        direction = (pygame.mouse.get_pos() - self.pos).normalize()
+        self.vertices = [direction * self.size + self.pos, 
+                         direction.rotate(-120) * self.size + self.pos, 
+                         direction.rotate(120) * self.size + self.pos]
+
