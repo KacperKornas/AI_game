@@ -1,15 +1,15 @@
 import pygame
+from pygame.math import Vector2
 
 
 class Player:
     def __init__(self, x, y, screen_width, screen_height):
         # Initialize player attributes
-        self.radius = 16
-        self.x = int(x)
-        self.y = int(y)
+        self.pos = Vector2(x, y)
+        self.size = 12
+        self.rotation = 0
         self.color = (255, 72, 193)
-        self.velX = 0
-        self.velY = 0
+        self.vel = Vector2(0, 0)
         self.left_pressed = False
         self.right_pressed = False
         self.up_pressed = False
@@ -17,28 +17,33 @@ class Player:
         self.speed = 4
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.vertices = [(self.pos[0], self.pos[1] - self.size), (self.pos[0] - self.size, self.pos[1] + self.size), (self.pos[0] + self.size, self.pos[1] + self.size)]
 
     def draw(self, screen):
-        # Draw the player as a circle on the screen
-        pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius)
+        pygame.draw.polygon(screen, self.color, self.vertices)
 
     def update(self):
         # Update player position and handle movement
-        self.velX = 0
-        self.velY = 0
+        self.vel = Vector2(0, 0)
         
         if self.left_pressed and not self.right_pressed:
-            self.velX = -self.speed
+            self.vel[0] = -self.speed
         if self.right_pressed and not self.left_pressed:
-            self.velX = self.speed
+            self.vel[0] = self.speed
         if self.up_pressed and not self.down_pressed:
-            self.velY = -self.speed
+            self.vel[1] = -self.speed
         if self.down_pressed and not self.up_pressed:
-            self.velY = self.speed
+            self.vel[1] = self.speed
 
-        self.x += self.velX
-        self.y += self.velY
+        # self.x += self.velX
+        # self.y += self.velY
+        self.pos += self.vel
+        print(pygame.mouse.get_pos() - self.pos)
 
         # Ensure the player stays within the screen boundaries
-        self.x = max(self.radius, min(self.x, self.screen_width - self.radius))
-        self.y = max(self.radius, min(self.y, self.screen_height - self.radius))
+        # self.x = max(self.size, min(self.x, self.screen_width - self.size))
+        # self.y = max(self.size, min(self.y, self.screen_height - self.size))
+        self.pos[0] = max(self.size, min(self.pos[0], self.screen_width - self.size))
+        self.pos[1] = max(self.size, min(self.pos[1], self.screen_height - self.size))
+        # self.vertices = [(self.x, self.y - self.size), (self.x - self.size, self.y + self.size), (self.x + self.size, self.y + self.size)]
+        self.vertices = [self.pos + (0, -self.size), self.pos + (-self.size, self.size), self.pos + (self.size, self.size)]
