@@ -18,7 +18,9 @@ black = (0, 0, 0)
 player = Player(WIDTH/2, HEIGHT/2, WIDTH, HEIGHT)
 
 # Define the positions and sizes of obstacles in the game
-obstacle_positions = [(140, 140), (650, 600), (500, 300), (700, 100), (190, 480), (700, 300), (400, 150), (300, 700)]
+obstacle_positions = [(140, 140), (650, 600), (500, 300), 
+                      (700, 100), (190, 480), (700, 300), 
+                      (400, 150), (300, 700)]
 obstacle_radius = [100, 80, 70, 50, 60, 40, 50, 70]
 
 # Create obstacle objects based on the previously defined positions and sizes

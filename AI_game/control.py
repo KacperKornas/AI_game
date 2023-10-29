@@ -17,24 +17,24 @@ class Control:
 
             if event.type == pygame.KEYDOWN:
                 # Check for keydown events (key press)
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT or event.key == ord('a'):
                     self.player.left_pressed = True
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT or event.key == ord('d'):
                     self.player.right_pressed = True
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP or event.key == ord('w'):
                     self.player.up_pressed = True
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN or event.key == ord('s'):
                     self.player.down_pressed = True
 
             if event.type == pygame.KEYUP:
                 # Check for keyup events (key release)
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT or event.key == ord('a'):
                     self.player.left_pressed = False
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT or event.key == ord('d'):
                     self.player.right_pressed = False
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP or event.key == ord('w'):
                     self.player.up_pressed = False
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN or event.key == ord('s'):
                     self.player.down_pressed = False
 
         return True  # Continue the game loop after handling events
