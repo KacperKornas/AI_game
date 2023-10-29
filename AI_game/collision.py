@@ -9,9 +9,9 @@ class CollisionDetection:
 
     def detect_collisions(self):
         # Detect collisions between the player and obstacles
-        for obstacle in self.obstacles:
+        # for obstacle in self.obstacles:
             # Calculate the distance vector between the player and the obstacle
-            distance = pygame.math.Vector2(obstacle.x - self.player.x, obstacle.y - self.player.y)
+            # distance = pygame.math.Vector2(obstacle.x - self.player.x, obstacle.y - self.player.y)
             # if distance.length() < obstacle.radius + self.player.radius:
             #     # Check if the distance is less than the sum of the radii (collision detected)
             #     overlap = (obstacle.radius + self.player.radius) - distance.length()
@@ -21,3 +21,4 @@ class CollisionDetection:
             #         # Calculate the overlap vector to resolve the collision
             #         self.player.x -= overlap_vector.x  # Adjust the player's x-coordinate
             #         self.player.y -= overlap_vector.y  # Adjust the player's y-coordinate
+        pass

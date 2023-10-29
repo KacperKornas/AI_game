@@ -17,7 +17,7 @@ class Player:
         self.speed = 4
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.vertices = [(self.pos[0], self.pos[1] - self.size), (self.pos[0] - self.size, self.pos[1] + self.size), (self.pos[0] + self.size, self.pos[1] + self.size)]
+        self.vertices = [self.pos + (0, -self.size), self.pos + (-self.size, self.size), self.pos + (self.size, self.size)]
 
     def draw(self, screen):
         pygame.draw.polygon(screen, self.color, self.vertices)
