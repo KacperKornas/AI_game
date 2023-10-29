@@ -13,10 +13,9 @@ class Control:
         # Handle player control events and window quit event
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return False  # Exit the game if the window is closed
+                return False
 
             if event.type == pygame.KEYDOWN:
-                # Check for keydown events (key press)
                 if event.key == pygame.K_LEFT or event.key == ord('a'):
                     self.player.left_pressed = True
                 if event.key == pygame.K_RIGHT or event.key == ord('d'):
@@ -27,7 +26,6 @@ class Control:
                     self.player.down_pressed = True
 
             if event.type == pygame.KEYUP:
-                # Check for keyup events (key release)
                 if event.key == pygame.K_LEFT or event.key == ord('a'):
                     self.player.left_pressed = False
                 if event.key == pygame.K_RIGHT or event.key == ord('d'):
@@ -37,4 +35,4 @@ class Control:
                 if event.key == pygame.K_DOWN or event.key == ord('s'):
                     self.player.down_pressed = False
 
-        return True  # Continue the game loop after handling events
+        return True

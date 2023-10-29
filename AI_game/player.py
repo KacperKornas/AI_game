@@ -27,7 +27,6 @@ class Player:
         self.velX = 0
         self.velY = 0
         
-
         if self.left_pressed and not self.right_pressed:
             self.velX = -self.speed
         if self.right_pressed and not self.left_pressed:
