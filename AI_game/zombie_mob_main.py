@@ -25,7 +25,7 @@ obstacle_positions = [(140, 140), (650, 600), (500, 300),
 obstacle_radius = [100, 80, 70, 50, 60, 40, 50, 70]
 
 enemies = [
-    Enemy(WIDTH / 3, HEIGHT / 3, 5, WIDTH, HEIGHT)
+    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT)
 ]
 
 # Create obstacle objects based on the previously defined positions and sizes
@@ -39,15 +39,19 @@ collision_detection = CollisionDetection(player, obstacles)
 
 # Main game loop
 running = True
-
+last_time = pygame.time.get_ticks()
 
 while running:
     running = control.handle_events()  # Handle events, such as player movement
+    
+    current_time = pygame.time.get_ticks()
+    dt = (current_time - last_time) / 1000.0  # Convert to seconds
+    last_time = current_time
 
     screen.fill(black)  # Clear the screen with the background color
     
     for enemy in enemies:
-        enemy.update()
+        enemy.update(dt)
         enemy.draw(screen)
 
     collision_detection.detect_collisions()  # Detect collisions between the player and obstacles
