@@ -25,6 +25,15 @@ obstacle_positions = [(140, 140), (650, 600), (500, 300),
 obstacle_radius = [100, 80, 70, 50, 60, 40, 50, 70]
 
 enemies = [
+    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
+    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
+    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
+    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
+    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
+    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
+    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
+    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
+    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
     Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT)
 ]
 
@@ -35,7 +44,7 @@ obstacles = [Obstacle(x, y, radius, WIDTH, HEIGHT) for (x, y), radius in zip(obs
 control = Control(player, obstacles, WIDTH, HEIGHT)
 
 # Create a CollisionDetection object responsible for detecting collisions between the player and obstacles
-collision_detection = CollisionDetection(player, obstacles)
+collision_detection = CollisionDetection(player, enemies, obstacles)
 
 # Main game loop
 running = True
@@ -53,14 +62,16 @@ while running:
 
     screen.fill(black)  # Clear the screen with the background color
     
-    for enemy in enemies:
-        enemy.update(dt)
-        enemy.draw(screen)
 
     collision_detection.detect_collisions()  # Detect collisions between the player and obstacles
+    
 
     for obstacle in obstacles:
         obstacle.draw(screen)  # Draw obstacles on the screen
+        
+    for enemy in enemies:
+        enemy.update(dt)
+        enemy.draw(screen)
 
     player.update()  # Update the player's position
     player.draw(screen)  # Draw the player on the screen
