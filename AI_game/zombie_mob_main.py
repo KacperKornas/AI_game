@@ -46,6 +46,9 @@ while running:
     
     current_time = pygame.time.get_ticks()
     dt = (current_time - last_time) / 1000.0  # Convert to seconds
+    
+    # if (dt < 1) : continue
+    
     last_time = current_time
 
     screen.fill(black)  # Clear the screen with the background color
