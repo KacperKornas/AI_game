@@ -5,6 +5,7 @@ from player import Player
 from enemy import Enemy
 from control import Control
 from collision import CollisionDetection
+from world import World
 
 
 pygame.init()
@@ -24,21 +25,24 @@ obstacle_positions = [(140, 140), (650, 600), (500, 300),
                       (400, 150), (300, 700)]
 obstacle_radius = [100, 80, 70, 50, 60, 40, 50, 70]
 
-enemies = [
-    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
-    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
-    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
-    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
-    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
-    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
-    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
-    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
-    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
-    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT)
-]
-
 # Create obstacle objects based on the previously defined positions and sizes
 obstacles = [Obstacle(x, y, radius, WIDTH, HEIGHT) for (x, y), radius in zip(obstacle_positions, obstacle_radius)]
+
+world = World(obstacles)
+
+enemies = [
+    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
+    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
+    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
+    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
+    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
+    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
+    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
+    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT, world),
+    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT, world),
+    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT, world)
+]
+
 
 # Create a Control object that manages event handling in the game
 control = Control(player, obstacles, WIDTH, HEIGHT)

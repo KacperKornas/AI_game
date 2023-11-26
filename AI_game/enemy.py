@@ -2,7 +2,7 @@ import pygame
 from pygame.math import Vector2
 
 class Enemy:
-    def __init__(self, x, y, radius, screen_width, screen_height):
+    def __init__(self, x, y, radius, screen_width, screen_height, world):
         # Initialize player attributes
         self.pos = Vector2(x, y)
         self.vel = Vector2(1, 0)
@@ -16,8 +16,14 @@ class Enemy:
         self.max_force = 1
         self.max_turn_rate = 10
         
+        self.world = world
+        
         import steeringBehaviours
         self.steering = steeringBehaviours.SteeringBehaviours(self)
+        
+    
+    def getWorld(self):
+        return self.world
         
     def getPos(self) -> Vector2:
         return self.pos
@@ -30,10 +36,18 @@ class Enemy:
     
     def getHeading(self) -> Vector2:
         return self.vel.normalize()
+    
+    def getRadius(self) -> int:
+        return self.radius
+    
+    def getPerp(self) -> Vector2:
+        heading = self.getHeading()
+        return Vector2(-heading[1], heading[0])
 
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, self.pos, self.radius)
-        pygame.draw.line(screen, (255, 255, 255), self.pos, self.getHeading() * 20 + self.pos, 2)
+        # pygame.draw.line(screen, (255, 255, 255), self.pos, self.getHeading() * 20 + self.pos, 2)
+        # pygame.draw.line(screen, (255, 255, 255), self.pos, self.getPerp() * 20 + self.pos, 2)
         self.steering.draw(screen)
         
     def update(self, dt):

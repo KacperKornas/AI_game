@@ -9,10 +9,18 @@ class Obstacle:
         self.color = (0, 128, 0)
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.tagged = False
 
     def draw(self, screen):
         # Draw the obstacle as a green circle on the screen
-        pygame.draw.circle(screen, self.color, self.pos, self.radius)
+        if not self.tagged:
+            pygame.draw.circle(screen, self.color, self.pos, self.radius)
+        else:
+            pygame.draw.circle(screen, (128, 128, 0), self.pos, self.radius)
+            
         
     def getPos(self):
         return self.pos
+    
+    def getRadius(self):
+        return self.radius

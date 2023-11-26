@@ -32,7 +32,7 @@ class Matrix:
         
         return Matrix.multiply(mat, mat_trans)
     
-    def transformVector2Ds(vPoint, mat):
+    def transformVector2Ds(vPoint: Vector2, mat):
         tempX = (mat[0][0] * vPoint.x) + (mat[1][0] * vPoint.y) + (mat[2][0])
         tempY = (mat[0][1] * vPoint.x) + (mat[1][1] * vPoint.y) + (mat[2][1])
         return Vector2(tempX, tempY)
