@@ -28,7 +28,7 @@ obstacle_radius = [100, 80, 70, 50, 60, 40, 50, 70]
 # Create obstacle objects based on the previously defined positions and sizes
 obstacles = [Obstacle(x, y, radius, WIDTH, HEIGHT) for (x, y), radius in zip(obstacle_positions, obstacle_radius)]
 
-world = World(obstacles)
+world = World(obstacles, WIDTH, HEIGHT)
 
 enemies = [
     # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
@@ -38,8 +38,8 @@ enemies = [
     # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
     # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
     # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
-    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT, world),
-    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT, world),
+    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT, world),
+    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT, world),
     Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT, world)
 ]
 

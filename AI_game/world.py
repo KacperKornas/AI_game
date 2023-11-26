@@ -1,9 +1,11 @@
 class World:
-    def __init__(self, obstacles):
+    def __init__(self, obstacles, screen_width, screen_height):
     # Initialize player attributes
     # self.player = player
     # self.enemies = enemies
         self.obstacles = obstacles
+        self.screen_width = screen_width
+        self.screen_height = screen_height
         
     def getObstaclesWithinViewRange(self, agent, boxLength):
         obstaclesWithinViewRange = []
@@ -17,5 +19,14 @@ class World:
             
         
         return obstaclesWithinViewRange
+    
+    def getWalls(self):
+        from pygame.math import Vector2
+        return [
+            [Vector2(0, 0), Vector2(self.screen_width, 0)],
+            [Vector2(self.screen_width, 0), Vector2(self.screen_width, self.screen_height)],
+            [Vector2(self.screen_width, self.screen_height), Vector2(0, self.screen_height)],
+            [Vector2(0, self.screen_height), Vector2(0, 0)]
+        ]
         
     

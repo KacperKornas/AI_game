@@ -21,12 +21,31 @@ class SteeringBehaviours:
         self.max_force = 0.001
         
         # obstacleAvoidance
+        self.minDetectionBoxLength = 30
+        self.lateralForceMult = 10.0
+        self.brakingWeight = 5.0
         self.boxLength = 0
         self.avoidObstacleForce = Vector2(0, 0)
         
+        # wallAvoidance
+        self.wallDetectionFeelerLength = 60
+        self.feelers = []
+        self.dist = 0
+        self.point = Vector2()
+        self.wallForce = Vector2(0, 0)
+        
     def draw(self, screen):
         # self.drawWander(screen)
-        self.drawObstacleAvoidance(screen)
+        # self.drawObstacleAvoidance(screen)
+        # self.drawWallAvoidance(screen)
+        pass
+    
+    def drawWallAvoidance(self, screen):
+        if len(self.feelers) > 0:
+            for feeler in self.feelers:
+                pygame.draw.line(screen, (255, 255, 255), self.agent.getPos(), feeler)
+            pygame.draw.line(screen, (255, 255, 255), self.agent.getPos(), self.agent.getPos() + self.wallForce)
+        pass
         
     
     def drawObstacleAvoidance(self, screen):
@@ -48,6 +67,11 @@ class SteeringBehaviours:
         steering_force = Vector2(0, 0)
         steering_force += self.wander()
         steering_force += self.obstacleAvoidance()
+        
+        wall = self.wallAvoidance()
+        if wall.length() > 0:
+            steering_force = wall
+        # steering_force += self.wallAvoidance()
         return steering_force * self.max_force
     
     def seek(self, target_pos: Vector2) -> Vector2:
@@ -84,8 +108,7 @@ class SteeringBehaviours:
         return Matrix.transformVector2Ds(vec, matrix)
     
     def obstacleAvoidance(self):
-        minDetectionBoxLength = 30
-        self.boxLength = minDetectionBoxLength + (self.agent.getVelocity().length() / self.agent.getMaxSpeed()) * minDetectionBoxLength
+        self.boxLength = self.minDetectionBoxLength + (self.agent.getVelocity().length() / self.agent.getMaxSpeed()) * self.minDetectionBoxLength
         
         obstaclesWithinRange = self.agent.getWorld().getObstaclesWithinViewRange(self.agent, self.boxLength)
         
@@ -124,18 +147,76 @@ class SteeringBehaviours:
             self.avoidObstacleForce = Vector2(0, 0)
             return Vector2(0, 0)
         
-        multiplier = 1.0 + (self.boxLength - localPosOfClosestObstacle.x) / self.boxLength
+        multiplier = self.lateralForceMult + (self.boxLength - localPosOfClosestObstacle.x) / self.boxLength
         
         # lateral force
         steeringForce = Vector2(0, 0)
         steeringForce.y = (closestIntersectingObstacle.getRadius() - localPosOfClosestObstacle.y) * multiplier
         
         # braking force
-        brakingWeight = 0.2
-        steeringForce.x = (closestIntersectingObstacle.getRadius() - localPosOfClosestObstacle.x) * brakingWeight
+        steeringForce.x = (closestIntersectingObstacle.getRadius() - localPosOfClosestObstacle.x) * self.brakingWeight
         
         self.avoidObstacleForce = self.VectorToWorldSpace(steeringForce, self.agent.getHeading(), self.agent.getPerp())
         return self.avoidObstacleForce
+    
+    def wallAvoidance(self):
+        self.createFeelers()
+
+        walls = self.agent.getWorld().getWalls()
+        self.dist = 0.0
+        distToClosestIP = sys.float_info.max
+        closestWall = None
+        steeringForce = Vector2(0, 0)
+        self.point = Vector2(0, 0)
+        closestPoint = Vector2(0, 0)
         
+        for feeler in self.feelers:
+            for wall in walls:
+                if self.lineIntersection2D(self.agent.getPos(), feeler, wall[0], wall[1]) and (self.dist < distToClosestIP):
+                    distToClosestIP = self.dist
+                    closestWall = wall
+                    closestPoint = self.point
+                    
+            if closestWall is None:
+                continue
+            
+            overShoot = feeler - closestPoint
+            wallNormal = (closestWall[1] - closestWall[0]).normalize()
+            wallNormal = Vector2(-wallNormal.y, wallNormal.x)
+            steeringForce = wallNormal * overShoot.length()
+            
+            self.wallForce = steeringForce
+                    
+        return steeringForce
+                
+    
+    def createFeelers(self):
+        self.feelers = [
+            self.agent.getPos() + self.wallDetectionFeelerLength * self.agent.getHeading(),
+            self.agent.getPos() + self.wallDetectionFeelerLength / 2.0 * self.agent.getHeading().rotate(45),
+            self.agent.getPos() + self.wallDetectionFeelerLength / 2.0 * self.agent.getHeading().rotate(-45)
+        ]
         
+        return self.feelers
+    
+    def lineIntersection2D(self, A: Vector2, B: Vector2, C: Vector2, D: Vector2):
         
+        rTop = (A.y-C.y)*(D.x-C.x)-(A.x-C.x)*(D.y-C.y)
+        rBot = (B.x-A.x)*(D.y-C.y)-(B.y-A.y)*(D.x-C.x)
+        sTop = (A.y-C.y)*(B.x-A.x)-(A.x-C.x)*(B.y-A.y)
+        sBot = (B.x-A.x)*(D.y-C.y)-(B.y-A.y)*(D.x-C.x)
+        
+        if (rBot == 0) or (sBot == 0):
+            # lines are parallel
+            return False
+        
+        r = rTop / rBot
+        s = sTop / sBot
+        
+        if r > 0 and r < 1 and s > 0 and s < 1:
+            self.dist = A.distance_to(B) * r # check it
+            self.point = A + r * (B - A)
+            return True
+        else:
+            self.dist = 0
+            return False
