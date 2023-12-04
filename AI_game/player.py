@@ -13,14 +13,14 @@ class Player:
         self.right_pressed = False
         self.up_pressed = False
         self.down_pressed = False
-        self.speed = 4
+        self.speed = 1.5
         self.screen_width = screen_width
         self.screen_height = screen_height
         
-        direction = (pygame.mouse.get_pos() - self.pos).normalize()
-        self.vertices = [direction * self.size + self.pos, 
-                         direction.rotate(-120) * self.size + self.pos, 
-                         direction.rotate(120) * self.size + self.pos]
+        self.direction = (pygame.mouse.get_pos() - self.pos).normalize()
+        self.vertices = [self.direction * self.size + self.pos, 
+                         self.direction.rotate(-120) * self.size + self.pos, 
+                         self.direction.rotate(120) * self.size + self.pos]
 
     def draw(self, screen):
         pygame.draw.polygon(screen, self.color, self.vertices)

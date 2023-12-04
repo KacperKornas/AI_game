@@ -31,15 +31,15 @@ obstacles = [Obstacle(x, y, radius, WIDTH, HEIGHT) for (x, y), radius in zip(obs
 world = World(player, obstacles, WIDTH, HEIGHT)
 
 enemies = [
-    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
-    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
-    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
-    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
-    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
-    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
-    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT),
+    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT, world),
     Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT, world),
-    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT, world),
+    Enemy(200, 250, 4, WIDTH, HEIGHT, world),
+    Enemy(100, 100, 4, WIDTH, HEIGHT, world),
+    Enemy(WIDTH, HEIGHT, 4, WIDTH, HEIGHT, world),
+    Enemy(WIDTH, HEIGHT / 4, 4, WIDTH, HEIGHT, world),
+    Enemy(WIDTH / 3, HEIGHT, 4, WIDTH, HEIGHT, world),
+    Enemy(WIDTH / 3, HEIGHT / 2, 4, WIDTH, HEIGHT, world),
+    Enemy(WIDTH / 2, HEIGHT / 4, 4, WIDTH, HEIGHT, world),
     Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT, world)
 ]
 

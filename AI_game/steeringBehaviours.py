@@ -23,7 +23,7 @@ class SteeringBehaviours:
         self.max_force = 0.001
         
         # obstacleAvoidance
-        self.minDetectionBoxLength = 30
+        self.minDetectionBoxLength = 10
         self.lateralForceMult = 10.0
         self.brakingWeight = 5.0
         self.boxLength = 0
@@ -39,6 +39,7 @@ class SteeringBehaviours:
         # hide
         self.dots = []
         self.bestHidingSpot = Vector2()
+        self.isHidding = False  
         
         # arrive
         self.arrivePos = Vector2(0, 0)
@@ -82,14 +83,17 @@ class SteeringBehaviours:
     
     def calculate(self) -> Vector2:
         steering_force = Vector2(0, 0)
-        steering_force += self.wander()
-        steering_force += self.obstacleAvoidance()
         
+        if self.isInThreatDist():
+            steering_force += self.hide()
+        else:
+            steering_force += self.wander()
+            
+        steering_force += self.obstacleAvoidance()
         wall = self.wallAvoidance()
-        if wall.length() > 0:
-            # steering_force = wall
-            steering_force += self.wallAvoidance()
-        # steering_force += self.hide()
+        if wall.length() > 1:
+            steering_force = wall
+            # steering_force += self.wallAvoidance()
             
         return steering_force * self.max_force
     
@@ -270,6 +274,7 @@ class SteeringBehaviours:
         self.arrivePos = self.arrive(bestHidingSpot, Deceleration.FAST.value)
         self.bestHidingSpot = bestHidingSpot
         
+        
         return self.arrivePos
     
     
@@ -285,5 +290,13 @@ class SteeringBehaviours:
             return desiredVelocity - self.agent.getVelocity()
         
         return Vector2(0, 0)
+    
+    def isInThreatDist(self):
+        # playerDir: Vector2 = self.agent.getWorld().getPlayer().direction
         
+        playerPos: Vector2 = self.agent.getWorld().getPlayer().pos
+        hide = (playerPos - self.agent.getPos()).length() <= 300
+        # print(hide)
+        
+        return hide
         
