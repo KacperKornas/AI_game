@@ -2,9 +2,11 @@ from pygame.math import Vector2
 import pygame
 from enemy import Enemy
 from matrix import Matrix
+from deceleration import Deceleration
 import math
 import random
 import sys
+
 
 class SteeringBehaviours:
     
@@ -34,10 +36,25 @@ class SteeringBehaviours:
         self.point = Vector2()
         self.wallForce = Vector2(0, 0)
         
+        # hide
+        self.dots = []
+        self.bestHidingSpot = Vector2()
+        
+        # arrive
+        self.arrivePos = Vector2(0, 0)
+        
     def draw(self, screen):
         # self.drawWander(screen)
         # self.drawObstacleAvoidance(screen)
         # self.drawWallAvoidance(screen)
+        # for dot in self.dots:
+        #     pygame.draw.circle(screen, (255, 0, 0), dot, 5)
+        
+        # # pygame.draw.circle(screen, (255,255, 0), self.arrivePos, 5)
+        # pygame.draw.circle(screen, (0,255, 0), self.bestHidingSpot, 5)
+        # self.dots = []
+        
+        
         pass
     
     def drawWallAvoidance(self, screen):
@@ -70,8 +87,10 @@ class SteeringBehaviours:
         
         wall = self.wallAvoidance()
         if wall.length() > 0:
-            steering_force = wall
-        # steering_force += self.wallAvoidance()
+            # steering_force = wall
+            steering_force += self.wallAvoidance()
+        # steering_force += self.hide()
+            
         return steering_force * self.max_force
     
     def seek(self, target_pos: Vector2) -> Vector2:
@@ -220,3 +239,51 @@ class SteeringBehaviours:
         else:
             self.dist = 0
             return False
+        
+        
+    def getHidingPos(self, posOb: Vector2, radiusOb: float, posTarget: Vector2) -> Vector2:
+        distFromBoundry = 30.0
+        distAway = radiusOb + distFromBoundry
+        toOb = (posOb - posTarget).normalize()
+        return (toOb * distAway) + posOb
+    
+    def hide(self):
+        distToClosest = sys.float_info.max
+        bestHidingSpot = None
+        
+        for obstacle in self.agent.getWorld().obstacles:
+            hidingSpot = self.getHidingPos(obstacle.getPos(), obstacle.radius, self.agent.getWorld().getPlayer().pos)
+            
+            self.dots.append(hidingSpot)
+            
+            dist = (hidingSpot - self.agent.getPos()).length()
+            
+            if dist < distToClosest:
+                distToClosest = dist
+                bestHidingSpot = hidingSpot
+                
+        # setting the max area for searching for hideout  
+        if distToClosest > 1000:
+            print("here should evade")
+            pass
+        
+        self.arrivePos = self.arrive(bestHidingSpot, Deceleration.FAST.value)
+        self.bestHidingSpot = bestHidingSpot
+        
+        return self.arrivePos
+    
+    
+    def arrive(self, targetPos: Vector2, deceleration: int) -> Vector2:
+        toTarget = targetPos - self.agent.getPos()
+        dist = toTarget.length()
+        
+        if dist > 0:
+            decelerationTweaker = 0.3
+            speed = dist / (deceleration * decelerationTweaker)
+            # speed = min(speed, self.agent.getMaxSpeed())
+            desiredVelocity = toTarget * speed / dist
+            return desiredVelocity - self.agent.getVelocity()
+        
+        return Vector2(0, 0)
+        
+        

@@ -1,11 +1,14 @@
 class World:
-    def __init__(self, obstacles, screen_width, screen_height):
+    def __init__(self, player, obstacles, screen_width, screen_height):
     # Initialize player attributes
-    # self.player = player
+        self.player = player
     # self.enemies = enemies
         self.obstacles = obstacles
         self.screen_width = screen_width
         self.screen_height = screen_height
+        
+    def getPlayer(self):
+        return self.player
         
     def getObstaclesWithinViewRange(self, agent, boxLength):
         obstaclesWithinViewRange = []
