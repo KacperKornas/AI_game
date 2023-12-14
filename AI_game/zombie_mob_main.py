@@ -32,7 +32,7 @@ world = World(player, obstacles, WIDTH, HEIGHT)
 
 enemies = [
     # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT, world),
-    Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT, world),
+    # Enemy(WIDTH / 3, HEIGHT / 4, 4, WIDTH, HEIGHT, world),
     Enemy(200, 250, 4, WIDTH, HEIGHT, world),
     Enemy(100, 100, 4, WIDTH, HEIGHT, world),
     Enemy(WIDTH, HEIGHT, 4, WIDTH, HEIGHT, world),

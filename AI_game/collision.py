@@ -27,3 +27,13 @@ class CollisionDetection:
                 overlap_vector = distance.normalize() * overlap
                 # Calculate the overlap vector to resolve the collision
                 self.player.pos -= overlap_vector 
+                
+        for enemyA in self.enemies:
+            for enemyB in self.enemies:
+                if enemyA is enemyB: continue
+                
+                distance = enemyB.getPos() - enemyA.getPos()
+                if distance.length != 0 and distance.length() < enemyA.getRadius() + enemyB.getRadius():
+                    overlap = (enemyA.getRadius() + enemyB.getRadius()) - distance.length()
+                    overlap_vector = distance.normalize() * overlap
+                    enemyA.pos -= overlap_vector
