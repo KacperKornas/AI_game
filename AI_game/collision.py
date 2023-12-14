@@ -33,7 +33,7 @@ class CollisionDetection:
                 if enemyA is enemyB: continue
                 
                 distance = enemyB.getPos() - enemyA.getPos()
-                if distance.length != 0 and distance.length() < enemyA.getRadius() + enemyB.getRadius():
+                if distance.length() != 0 and distance.length() < enemyA.getRadius() + enemyB.getRadius():
                     overlap = (enemyA.getRadius() + enemyB.getRadius()) - distance.length()
                     overlap_vector = distance.normalize() * overlap
                     enemyA.pos -= overlap_vector

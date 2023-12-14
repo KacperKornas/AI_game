@@ -44,6 +44,11 @@ class SteeringBehaviours:
         # arrive
         self.arrivePos = Vector2(0, 0)
         
+        # forces' weights
+        
+        self.hideWeight = 0.2
+        self.wanderWeight = 0.6
+        
     def draw(self, screen):
         # self.drawWander(screen)
         # self.drawObstacleAvoidance(screen)
@@ -84,10 +89,8 @@ class SteeringBehaviours:
     def calculate(self) -> Vector2:
         steering_force = Vector2(0, 0)
         
-        if self.isInThreatDist():
-            steering_force += self.hide()
-        else:
-            steering_force += self.wander()
+        steering_force += self.hide() * self.hideWeight
+        steering_force += self.wander() * self.wanderWeight
             
         steering_force += self.obstacleAvoidance()
         wall = self.wallAvoidance()
@@ -292,11 +295,9 @@ class SteeringBehaviours:
         return Vector2(0, 0)
     
     def isInThreatDist(self):
-        # playerDir: Vector2 = self.agent.getWorld().getPlayer().direction
-        
+        # TODO add player cone vision/rectangle sth else than circle :)
         playerPos: Vector2 = self.agent.getWorld().getPlayer().pos
         hide = (playerPos - self.agent.getPos()).length() <= 300
-        # print(hide)
-        
+
         return hide
         
