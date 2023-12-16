@@ -36,13 +36,10 @@ class World:
         
     
     def tagNeighbors(self, sourceAgent):
-        if sourceAgent.is_attacking:
-            return
         
-        sourceAgent.tagged = False
         tagRadius = 50
         
-        toTag = [sourceAgent]
+        toTag = []
         
         for enemy in self.enemies:
             if enemy is sourceAgent or enemy.is_attacking: continue
@@ -52,11 +49,16 @@ class World:
             if distance < tagRadius * tagRadius:
                 toTag.append(enemy)
             
+        sourceAgent.setNeighbors(toTag)
+        
+        if sourceAgent.is_attacking:
+            return
+        
+        toTag.append(sourceAgent)
         
         if len(toTag) > 10:
             for enemy in toTag:
                 enemy.color = (255, 0, 0)
-                enemy.tagged = True
                 enemy.readyToAttack()
                 
     def isInsideScreen(self, pos):
@@ -79,4 +81,9 @@ class World:
     def removeBullet(self, bullet):
         self.bullets.remove(bullet)
         self.player.addAttackSlot()
+        
+    def removeAgent(self, agent):
+        if agent.is_alive:
+            agent.die()
+            self.enemies.remove(agent)
     

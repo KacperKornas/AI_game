@@ -51,13 +51,13 @@ class CollisionDetection:
                 if enemyA.is_attacking:
                     self.player.hit()
                 # enemyA.die()
-                self.enemies.remove(enemyA)
+                self.world.removeAgent(enemyA)
                 
             for bullet in self.world.getBullets():
                 distance = (bullet.getPos() - enemyA.getPos()).length_squared()
                 
                 if distance != 0 and distance < (enemyA.getRadius() + bullet.radius) * (enemyA.getRadius() + bullet.radius):
                     self.world.removeBullet(bullet)
-                    self.enemies.remove(enemyA)
+                    self.world.removeAgent(enemyA)
                     
 

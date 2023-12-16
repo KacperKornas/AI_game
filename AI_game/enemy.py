@@ -23,10 +23,11 @@ class Enemy:
         
         self.delta = 0
         self.last_time = pygame.time.get_ticks()
-        self.tagged = False
         self.is_attacking = False
         
         self.is_alive = True
+        
+        self.neighbors = []
         
     
     def getWorld(self):
@@ -50,6 +51,15 @@ class Enemy:
     def getPerp(self) -> Vector2:
         heading = self.getHeading()
         return Vector2(-heading[1], heading[0])
+    
+    def setNeighbors(self, neighbors):
+        self.neighbors = neighbors
+    
+    def getNeighbors(self):
+        return self.neighbors
+    
+    def isTagged(self):
+        return self.is_attacking
 
     def draw(self, screen):
         if not self.is_alive: return
@@ -61,7 +71,7 @@ class Enemy:
         self.is_attacking = True
         
     def die(self):
-        pass
+        self.is_alive = False
         
     def update(self, dt):
         self.world.tagNeighbors(self)
