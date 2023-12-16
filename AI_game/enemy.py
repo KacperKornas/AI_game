@@ -78,7 +78,7 @@ class Enemy:
         self.delta = (current_time - self.last_time) / 1000.0
         
         
-        if (self.delta > 10): 
+        if (self.delta > 5): 
             self.steering.recalculateWeights()
             self.last_time = current_time
         

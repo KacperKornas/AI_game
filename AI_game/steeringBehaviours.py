@@ -12,25 +12,26 @@ class SteeringBehaviours:
     
     def __init__(self, agent: Enemy) -> None:
         self.agent = agent
-        
+
+        # wander        
         self.theta = math.pi / 2
-        self.wander_radius = 50
-        self.wander_distance = 100
-        self.wander_jitter = 2
+        self.wander_radius = self.agent.getRadius() * 10
+        self.wander_distance = 100.0
+        self.wander_jitter = 80.0
         self.wander_target = Vector2(self.wander_radius * math.cos(self.theta), self.wander_radius * math.sin(self.theta))
         self.wander_point = self.agent.getHeading() * self.wander_distance + self.agent.getPos()
         self.target_pos = self.wander_point + self.wander_target
-        self.max_force = 0.008
+        self.max_force = 0.01
         
         # obstacleAvoidance
-        self.minDetectionBoxLength = agent.getRadius() * 2.5
+        self.minDetectionBoxLength = agent.getRadius() * 3
         self.lateralForceMult = 5.0
-        self.brakingWeight = 5.0
+        self.brakingWeight = 0.2
         self.boxLength = 0
         self.avoidObstacleForce = Vector2(0, 0)
         
         # wallAvoidance
-        self.wallDetectionFeelerLength = 60
+        self.wallDetectionFeelerLength = self.agent.getRadius() * 15
         self.feelers = []
         self.dist = 0
         self.point = Vector2()
@@ -45,14 +46,14 @@ class SteeringBehaviours:
         self.arrivePos = Vector2(0, 0)
         
         # forces' weights
-        self.hideWeight = 0.4
-        self.wanderWeight = 0.6
+        self.hideWeight = 0.8
+        self.wanderWeight = 0.8
         
     def recalculateWeights(self):
         # EXPERIMENTAL :)
         # print("prev:", self.hideWeight, self.wanderWeight)
-        self.hideWeight = random.uniform(0.1, 0.5)
-        self.wanderWeight = random.uniform(0.6, 1)
+        self.hideWeight = random.uniform(0.0, 0.2)
+        self.wanderWeight = random.uniform(0.8, 1)
         # print("new:", self.hideWeight, self.wanderWeight)
         pass
     
@@ -65,7 +66,7 @@ class SteeringBehaviours:
         if (self.agent.is_attacking):
             steering_force = self.arrive(self.agent.getWorld().getPlayer().getPos(), Deceleration.SLOW.value)
 
-        steering_force += self.obstacleAvoidance()
+        steering_force += self.obstacleAvoidance() * 2
         steering_force += self.wallAvoidance() * 2 
             
         return steering_force * self.max_force
@@ -111,13 +112,25 @@ class SteeringBehaviours:
         return desired_vel - self.agent.getVelocity()
     
     def wander(self):
+        ######## base VERSION #######
+        # self.wander_point = self.agent.getHeading() * self.wander_distance + self.agent.getPos()
+        # theta = self.theta + math.radians(Vector2(1, 0).angle_to(self.agent.getHeading()))
+        # self.wander_target = Vector2(self.wander_radius * math.cos(theta), self.wander_radius * math.sin(theta))
+        # self.target_pos = self.wander_point + self.wander_target
+        # displacement = 0.3
+        # self.theta += random.uniform(-displacement, displacement)
+        # return self.target_pos - self.agent.getPos()
+        
+        ##### FROM THE BOOK #####
         self.wander_point = self.agent.getHeading() * self.wander_distance + self.agent.getPos()
-        theta = self.theta + math.radians(Vector2(1, 0).angle_to(self.agent.getHeading()))
-        self.wander_target = Vector2(self.wander_radius * math.cos(theta), self.wander_radius * math.sin(theta))
+        self.wander_target += Vector2(random.uniform(-1, 1) * self.wander_jitter, random.uniform(-1, 1) * self.wander_jitter)
+        self.wander_target = self.wander_target.normalize() * self.wander_radius
         self.target_pos = self.wander_point + self.wander_target
-        displacement = 0.3
-        self.theta += random.uniform(-displacement, displacement)
-        return self.target_pos - self.agent.getPos()
+        target_local = Vector2(self.wander_distance, 0) + self.wander_target
+        target_world = Matrix.pointToWorldSpace(target_local, self.agent.getHeading(), self.agent.getPerp(), self.agent.getPos())
+        
+        return target_world - self.agent.getPos()
+        
     
     
     def obstacleAvoidance(self):
