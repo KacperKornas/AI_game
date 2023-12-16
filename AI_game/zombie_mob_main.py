@@ -43,7 +43,7 @@ for n in range(80):
 control = Control(player, obstacles, WIDTH, HEIGHT)
 
 # Create a CollisionDetection object responsible for detecting collisions between the player and obstacles
-collision_detection = CollisionDetection(player, enemies, obstacles)
+collision_detection = CollisionDetection(player, enemies, obstacles, world)
 
 # Main game loop
 running = True

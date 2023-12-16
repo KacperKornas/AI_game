@@ -136,7 +136,6 @@ class SteeringBehaviours:
         return target_world - self.agent.getPos()
         
     
-    
     def obstacleAvoidance(self):
         self.boxLength = self.minDetectionBoxLength + (self.agent.getVelocity().length() / self.agent.getMaxSpeed()) * self.minDetectionBoxLength
         
