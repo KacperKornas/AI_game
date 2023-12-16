@@ -1,5 +1,6 @@
 import pygame
 from pygame.math import Vector2
+from bullet import Bullet
 
 
 class Player:
@@ -17,6 +18,8 @@ class Player:
         self.speed = 1.5
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.world = None
+        self.attacks_available = 3
         
         self.direction = (pygame.mouse.get_pos() - self.pos).normalize()
         self.vertices = [self.direction * self.size + self.pos, 
@@ -25,8 +28,8 @@ class Player:
 
     def draw(self, screen):
         pygame.draw.polygon(screen, self.color, self.vertices)
-        pygame.draw.line(screen, pygame.Color(255, 1, 1, 0), self.pos, self.vertices[0], 2)
         pygame.draw.line(screen, pygame.Color(0, 255, 0, 0), self.pos, pygame.mouse.get_pos(), 2) # player pointing vector
+        self.world.drawBullets(screen)
         
     def getPos(self):
         return self.pos
@@ -56,8 +59,25 @@ class Player:
                          direction.rotate(-120) * self.size + self.pos, 
                          direction.rotate(120) * self.size + self.pos]
         
+        self.world.updateBullets()
+        
+    def setWorld(self, world):
+        self.world = world
+        
     def hit(self):
         self.health -= 2
         print("health remaining: ", self.health)
         pass
+    
+    def attack(self):
+        if self.attacks_available < 1: return
+        
+        direction = (pygame.mouse.get_pos() - self.pos).normalize()
+        bullet = Bullet(self.world, self.pos + direction * self.size, direction)
+        self.world.addBullet(bullet)
+        self.attacks_available -= 1
+        
+    def addAttackSlot(self):
+        self.attacks_available += 1
+                    
 

@@ -34,5 +34,8 @@ class Control:
                     self.player.up_pressed = False
                 if event.key == pygame.K_DOWN or event.key == ord('s'):
                     self.player.down_pressed = False
+                    
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self.player.attack()
 
         return True
