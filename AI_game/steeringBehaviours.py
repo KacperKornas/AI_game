@@ -48,6 +48,7 @@ class SteeringBehaviours:
         # forces' weights
         self.hideWeight = 0.8
         self.wanderWeight = 0.8
+        self.hideCounter = 0
 
         # evade
         self.evadeWeight = 0.8
@@ -57,7 +58,11 @@ class SteeringBehaviours:
     def recalculateWeights(self):
         # EXPERIMENTAL :)
         # print("prev:", self.hideWeight, self.wanderWeight)
-        self.hideWeight = random.uniform(0.0, 0.2)
+        self.hideCounter += 1
+        if self.hideCounter % 2 == 0:
+            self.hideWeight = 0.8
+        else:
+            self.hideWeight = random.uniform(0.0, 0.2)
         self.wanderWeight = random.uniform(0.8, 1)
         # print("new:", self.hideWeight, self.wanderWeight)
         pass
@@ -281,8 +286,6 @@ class SteeringBehaviours:
             if neighbor is not self.agent and neighbor.isTagged():
                 to_agent = self.agent.getPos() - neighbor.getPos()
                 steering_force += to_agent.normalize() / to_agent.length()
-                
-        print(steering_force)
                 
         return steering_force
 
