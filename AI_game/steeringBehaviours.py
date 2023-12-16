@@ -20,11 +20,11 @@ class SteeringBehaviours:
         self.wander_target = Vector2(self.wander_radius * math.cos(self.theta), self.wander_radius * math.sin(self.theta))
         self.wander_point = self.agent.getHeading() * self.wander_distance + self.agent.getPos()
         self.target_pos = self.wander_point + self.wander_target
-        self.max_force = 0.001
+        self.max_force = 0.008
         
         # obstacleAvoidance
-        self.minDetectionBoxLength = 10
-        self.lateralForceMult = 10.0
+        self.minDetectionBoxLength = agent.getRadius() * 2.5
+        self.lateralForceMult = 5.0
         self.brakingWeight = 5.0
         self.boxLength = 0
         self.avoidObstacleForce = Vector2(0, 0)
@@ -45,9 +45,16 @@ class SteeringBehaviours:
         self.arrivePos = Vector2(0, 0)
         
         # forces' weights
-        
-        self.hideWeight = 0.2
+        self.hideWeight = 0.4
         self.wanderWeight = 0.6
+        
+    def recalculateWeights(self):
+        # EXPERIMENTAL :)
+        # print("prev:", self.hideWeight, self.wanderWeight)
+        self.hideWeight = random.uniform(0.1, 0.5)
+        self.wanderWeight = random.uniform(0.4, 1)
+        # print("new:", self.hideWeight, self.wanderWeight)
+        pass
         
     def draw(self, screen):
         # self.drawWander(screen)
@@ -91,12 +98,12 @@ class SteeringBehaviours:
         
         steering_force += self.hide() * self.hideWeight
         steering_force += self.wander() * self.wanderWeight
-            
+        
+        if (self.agent.is_attacking):
+            steering_force = self.arrive(self.agent.getWorld().getPlayer().getPos(), Deceleration.SLOW.value)
+
         steering_force += self.obstacleAvoidance()
-        wall = self.wallAvoidance()
-        if wall.length() > 1:
-            steering_force = wall
-            # steering_force += self.wallAvoidance()
+        steering_force += self.wallAvoidance() * 2 
             
         return steering_force * self.max_force
     

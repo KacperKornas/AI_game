@@ -21,6 +21,11 @@ class Enemy:
         import steeringBehaviours
         self.steering = steeringBehaviours.SteeringBehaviours(self)
         
+        self.delta = 0
+        self.last_time = pygame.time.get_ticks()
+        self.tagged = False
+        self.is_attacking = False
+        
     
     def getWorld(self):
         return self.world
@@ -50,7 +55,11 @@ class Enemy:
         # pygame.draw.line(screen, (255, 255, 255), self.pos, self.getPerp() * 20 + self.pos, 2)
         self.steering.draw(screen)
         
+    def readyToAttack(self):
+        self.is_attacking = True
+        
     def update(self, dt):
+        self.world.tagNeighbors(self)
         self.acc = self.steering.calculate() # mass equals 1 for simplicity
         self.vel += (self.acc)
         
@@ -63,4 +72,13 @@ class Enemy:
         
         self.pos[0] = max(self.radius, min(self.pos[0], self.screen_width - self.radius))
         self.pos[1] = max(self.radius, min(self.pos[1], self.screen_height - self.radius))
+        
+        
+        current_time = pygame.time.get_ticks()
+        self.delta = (current_time - self.last_time) / 1000.0
+        
+        
+        if (self.delta > 10): 
+            self.steering.recalculateWeights()
+            self.last_time = current_time
         

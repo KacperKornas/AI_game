@@ -26,6 +26,9 @@ class Player:
         pygame.draw.polygon(screen, self.color, self.vertices)
         pygame.draw.line(screen, pygame.Color(255, 1, 1, 0), self.pos, self.vertices[0], 2)
         pygame.draw.line(screen, pygame.Color(0, 255, 0, 0), self.pos, pygame.mouse.get_pos(), 2) # player pointing vector
+        
+    def getPos(self):
+        return self.pos
 
     def update(self):
         self.vel = Vector2(0, 0)

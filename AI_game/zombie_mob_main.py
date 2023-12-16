@@ -29,11 +29,12 @@ obstacle_radius = [100, 80, 70, 50, 60, 40, 50, 70]
 # Create obstacle objects based on the previously defined positions and sizes
 obstacles = [Obstacle(x, y, radius, WIDTH, HEIGHT) for (x, y), radius in zip(obstacle_positions, obstacle_radius)]
 
-world = World(player, obstacles, WIDTH, HEIGHT)
-
 enemies = []
 
-for n in range(50):
+world = World(player, enemies, obstacles, WIDTH, HEIGHT)
+
+
+for n in range(200):
     enemies.append(Enemy(random.random() * WIDTH, random.random() * HEIGHT, 3, WIDTH, HEIGHT, world))
     
 
@@ -64,12 +65,12 @@ while running:
     collision_detection.detect_collisions()  # Detect collisions between the player and obstacles
     
 
-    for obstacle in obstacles:
-        obstacle.draw(screen)  # Draw obstacles on the screen
-        
     for enemy in enemies:
         enemy.update(dt)
         enemy.draw(screen)
+    for obstacle in obstacles:
+        obstacle.draw(screen)  # Draw obstacles on the screen
+        
 
     player.update()  # Update the player's position
     player.draw(screen)  # Draw the player on the screen
