@@ -36,3 +36,24 @@ class Matrix:
         tempX = (mat[0][0] * vPoint.x) + (mat[1][0] * vPoint.y) + (mat[2][0])
         tempY = (mat[0][1] * vPoint.x) + (mat[1][1] * vPoint.y) + (mat[2][1])
         return Vector2(tempX, tempY)
+    
+    def pointToLocalSpace(point: Vector2, agentHeading: Vector2, agentSide: Vector2, agentPosition: Vector2):
+        Tx = -agentPosition.dot(agentHeading)
+        Ty = -agentPosition.dot(agentSide)
+        
+        matrix = [[agentHeading.x, agentSide.x, 0],
+                  [agentHeading.y, agentSide.y, 0],
+                  [Tx, Ty, 0]]
+        
+        return Matrix.transformVector2Ds(point, matrix)
+    
+    def pointToWorldSpace(point: Vector2, agent_heading: Vector2, agent_side: Vector2, agent_pos: Vector2):
+        matrix = Matrix.rotate(agent_heading, agent_side)
+        matrix = Matrix.translate(matrix, agent_pos)
+        
+        return Matrix.transformVector2Ds(point, matrix)
+
+    def VectorToWorldSpace(vec: Vector2, agentHeading: Vector2, agentSide: Vector2) -> Vector2:
+        matrix = Matrix.rotate(agentHeading, agentSide)
+        return Matrix.transformVector2Ds(vec, matrix)
+        

@@ -52,9 +52,23 @@ class SteeringBehaviours:
         # EXPERIMENTAL :)
         # print("prev:", self.hideWeight, self.wanderWeight)
         self.hideWeight = random.uniform(0.1, 0.5)
-        self.wanderWeight = random.uniform(0.4, 1)
+        self.wanderWeight = random.uniform(0.6, 1)
         # print("new:", self.hideWeight, self.wanderWeight)
         pass
+    
+    def calculate(self) -> Vector2:
+        steering_force = Vector2(0, 0)
+        
+        steering_force += self.hide() * self.hideWeight
+        steering_force += self.wander() * self.wanderWeight
+        
+        if (self.agent.is_attacking):
+            steering_force = self.arrive(self.agent.getWorld().getPlayer().getPos(), Deceleration.SLOW.value)
+
+        steering_force += self.obstacleAvoidance()
+        steering_force += self.wallAvoidance() * 2 
+            
+        return steering_force * self.max_force
         
     def draw(self, screen):
         # self.drawWander(screen)
@@ -66,7 +80,6 @@ class SteeringBehaviours:
         # # pygame.draw.circle(screen, (255,255, 0), self.arrivePos, 5)
         # pygame.draw.circle(screen, (0,255, 0), self.bestHidingSpot, 5)
         # self.dots = []
-        
         
         pass
     
@@ -93,20 +106,6 @@ class SteeringBehaviours:
         pygame.draw.line(screen,(255, 255, 255), self.agent.getPos(), self.target_pos)
         pygame.draw.line(screen, (255, 255, 255), self.agent.getPos(), self.wander_point)
     
-    def calculate(self) -> Vector2:
-        steering_force = Vector2(0, 0)
-        
-        steering_force += self.hide() * self.hideWeight
-        steering_force += self.wander() * self.wanderWeight
-        
-        if (self.agent.is_attacking):
-            steering_force = self.arrive(self.agent.getWorld().getPlayer().getPos(), Deceleration.SLOW.value)
-
-        steering_force += self.obstacleAvoidance()
-        steering_force += self.wallAvoidance() * 2 
-            
-        return steering_force * self.max_force
-    
     def seek(self, target_pos: Vector2) -> Vector2:
         desired_vel = (target_pos - self.agent.getPos()).normalize() * self.agent.getMaxSpeed()
         return desired_vel - self.agent.getVelocity()
@@ -120,25 +119,6 @@ class SteeringBehaviours:
         self.theta += random.uniform(-displacement, displacement)
         return self.target_pos - self.agent.getPos()
     
-    def pointToWorldSpace(self, point: Vector2, agent_heading: Vector2, agent_side: Vector2, agent_pos: Vector2):
-        matrix = Matrix.rotate(agent_heading, agent_side)
-        matrix = Matrix.translate(matrix, agent_pos)
-        
-        return Matrix.transformVector2Ds(point, matrix)
-    
-    def pointToLocalSpace(self, point: Vector2, agentHeading: Vector2, agentSide: Vector2, agentPosition: Vector2):
-        Tx = -agentPosition.dot(agentHeading)
-        Ty = -agentPosition.dot(agentSide)
-        
-        matrix = [[agentHeading.x, agentSide.x, 0],
-                  [agentHeading.y, agentSide.y, 0],
-                  [Tx, Ty, 0]]
-        
-        return Matrix.transformVector2Ds(point, matrix)
-    
-    def VectorToWorldSpace(self, vec: Vector2, agentHeading: Vector2, agentSide: Vector2) -> Vector2:
-        matrix = Matrix.rotate(agentHeading, agentSide)
-        return Matrix.transformVector2Ds(vec, matrix)
     
     def obstacleAvoidance(self):
         self.boxLength = self.minDetectionBoxLength + (self.agent.getVelocity().length() / self.agent.getMaxSpeed()) * self.minDetectionBoxLength
@@ -151,7 +131,7 @@ class SteeringBehaviours:
         
         for obstacle in obstaclesWithinRange:
             # obstacle.tagged = True
-            localPos = self.pointToLocalSpace(obstacle.getPos(), self.agent.getHeading(), self.agent.getPerp(), self.agent.getPos())
+            localPos = Matrix.pointToLocalSpace(obstacle.getPos(), self.agent.getHeading(), self.agent.getPerp(), self.agent.getPos())
             if localPos.x < 0:
                 obstacle.tagged = False
                 continue
@@ -189,7 +169,7 @@ class SteeringBehaviours:
         # braking force
         steeringForce.x = (closestIntersectingObstacle.getRadius() - localPosOfClosestObstacle.x) * self.brakingWeight
         
-        self.avoidObstacleForce = self.VectorToWorldSpace(steeringForce, self.agent.getHeading(), self.agent.getPerp())
+        self.avoidObstacleForce = Matrix.VectorToWorldSpace(steeringForce, self.agent.getHeading(), self.agent.getPerp())
         return self.avoidObstacleForce
     
     def wallAvoidance(self):
@@ -221,6 +201,47 @@ class SteeringBehaviours:
             self.wallForce = steeringForce
                     
         return steeringForce
+
+    def hide(self):
+        distToClosest = sys.float_info.max
+        bestHidingSpot = None
+        
+        for obstacle in self.agent.getWorld().obstacles:
+            hidingSpot = self.getHidingPos(obstacle.getPos(), obstacle.radius, self.agent.getWorld().getPlayer().pos)
+            
+            self.dots.append(hidingSpot)
+            
+            dist = (hidingSpot - self.agent.getPos()).length()
+            
+            if dist < distToClosest:
+                distToClosest = dist
+                bestHidingSpot = hidingSpot
+                
+        # setting the max area for searching for hideout  
+        if distToClosest > 1000:
+            print("here should evade")
+            pass
+        
+        self.arrivePos = self.arrive(bestHidingSpot, Deceleration.FAST.value)
+        self.bestHidingSpot = bestHidingSpot
+        
+        
+        return self.arrivePos
+    
+    
+    def arrive(self, targetPos: Vector2, deceleration: int) -> Vector2:
+        toTarget = targetPos - self.agent.getPos()
+        dist = toTarget.length()
+        
+        if dist > 0:
+    
+            decelerationTweaker = 0.3
+            speed = dist / (deceleration * decelerationTweaker)
+            # speed = min(speed, self.agent.getMaxSpeed())
+            desiredVelocity = toTarget * speed / dist
+            return desiredVelocity - self.agent.getVelocity()
+        
+        return Vector2(0, 0)
                 
     
     def createFeelers(self):
@@ -261,50 +282,3 @@ class SteeringBehaviours:
         toOb = (posOb - posTarget).normalize()
         return (toOb * distAway) + posOb
     
-    def hide(self):
-        distToClosest = sys.float_info.max
-        bestHidingSpot = None
-        
-        for obstacle in self.agent.getWorld().obstacles:
-            hidingSpot = self.getHidingPos(obstacle.getPos(), obstacle.radius, self.agent.getWorld().getPlayer().pos)
-            
-            self.dots.append(hidingSpot)
-            
-            dist = (hidingSpot - self.agent.getPos()).length()
-            
-            if dist < distToClosest:
-                distToClosest = dist
-                bestHidingSpot = hidingSpot
-                
-        # setting the max area for searching for hideout  
-        if distToClosest > 1000:
-            print("here should evade")
-            pass
-        
-        self.arrivePos = self.arrive(bestHidingSpot, Deceleration.FAST.value)
-        self.bestHidingSpot = bestHidingSpot
-        
-        
-        return self.arrivePos
-    
-    
-    def arrive(self, targetPos: Vector2, deceleration: int) -> Vector2:
-        toTarget = targetPos - self.agent.getPos()
-        dist = toTarget.length()
-        
-        if dist > 0:
-            decelerationTweaker = 0.3
-            speed = dist / (deceleration * decelerationTweaker)
-            # speed = min(speed, self.agent.getMaxSpeed())
-            desiredVelocity = toTarget * speed / dist
-            return desiredVelocity - self.agent.getVelocity()
-        
-        return Vector2(0, 0)
-    
-    def isInThreatDist(self):
-        # TODO add player cone vision/rectangle sth else than circle :)
-        playerPos: Vector2 = self.agent.getWorld().getPlayer().pos
-        hide = (playerPos - self.agent.getPos()).length() <= 300
-
-        return hide
-        
