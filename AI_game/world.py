@@ -36,13 +36,14 @@ class World:
         
     
     def tagNeighbors(self, sourceAgent):
+        # if sourceAgent.is_attacking:
+        #     return
         
         tagRadius = 50
-        
         toTag = []
         
         for enemy in self.enemies:
-            if enemy is sourceAgent or enemy.is_attacking: continue
+            if enemy is sourceAgent: continue
             
             distance = (sourceAgent.getPos() - enemy.getPos()).length_squared()
             
@@ -51,15 +52,8 @@ class World:
             
         sourceAgent.setNeighbors(toTag)
         
-        if sourceAgent.is_attacking:
-            return
-        
         toTag.append(sourceAgent)
         
-        if len(toTag) > 10:
-            for enemy in toTag:
-                enemy.color = (255, 0, 0)
-                enemy.readyToAttack()
                 
     def isInsideScreen(self, pos):
         return pos.x > 0 and pos.x < self.screen_width and pos.y > 0 and pos.y < self.screen_height

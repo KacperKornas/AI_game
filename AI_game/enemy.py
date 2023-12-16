@@ -68,13 +68,31 @@ class Enemy:
         self.steering.draw(screen)
         
     def readyToAttack(self):
+        self.color = (255, 0, 0)
         self.is_attacking = True
+        
+    def prepareToAttack(self):
+        if (not self.is_attacking) and len(self.neighbors) >= 10 and self.neighborsAreIdle():
+            self.readyToAttack()
+            
+            for enemy in self.neighbors:
+                if enemy.is_attacking: continue
+                
+                enemy.readyToAttack()
+                
+    def neighborsAreIdle(self):
+        for neighbor in self.neighbors:
+            if neighbor.is_attacking:
+                return False
+        
+        return True
         
     def die(self):
         self.is_alive = False
         
     def update(self, dt):
         self.world.tagNeighbors(self)
+        self.prepareToAttack()
         self.acc = self.steering.calculate() # mass equals 1 for simplicity
         self.vel += (self.acc)
         

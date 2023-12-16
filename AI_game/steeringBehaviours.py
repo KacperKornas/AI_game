@@ -71,7 +71,7 @@ class SteeringBehaviours:
         
         if (self.agent.is_attacking):
             steering_force = self.arrive(self.agent.getWorld().getPlayer().getPos(), Deceleration.SLOW.value)
-            # steering_force += self.separation(self.agent.getNeighbors())
+            steering_force += self.separation(self.agent.getNeighbors()) * 100
 
         steering_force += self.obstacleAvoidance() * 2
         steering_force += self.wallAvoidance() * 2 
@@ -281,6 +281,8 @@ class SteeringBehaviours:
             if neighbor is not self.agent and neighbor.isTagged():
                 to_agent = self.agent.getPos() - neighbor.getPos()
                 steering_force += to_agent.normalize() / to_agent.length()
+                
+        print(steering_force)
                 
         return steering_force
 

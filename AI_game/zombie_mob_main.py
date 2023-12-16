@@ -34,7 +34,7 @@ enemies = []
 world = World(player, enemies, obstacles, WIDTH, HEIGHT)
 
 
-for n in range(60):
+for n in range(100):
     enemies.append(Enemy(random.random() * WIDTH, random.random() * HEIGHT, 4, WIDTH, HEIGHT, world))
     
 # Create a Control object that manages event handling in the game
