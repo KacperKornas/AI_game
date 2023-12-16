@@ -34,7 +34,7 @@ enemies = []
 world = World(player, enemies, obstacles, WIDTH, HEIGHT)
 
 
-for n in range(200):
+for n in range(50):
     enemies.append(Enemy(random.random() * WIDTH, random.random() * HEIGHT, 4, WIDTH, HEIGHT, world))
     
 

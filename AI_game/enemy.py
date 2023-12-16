@@ -26,6 +26,8 @@ class Enemy:
         self.tagged = False
         self.is_attacking = False
         
+        self.is_alive = True
+        
     
     def getWorld(self):
         return self.world
@@ -50,13 +52,16 @@ class Enemy:
         return Vector2(-heading[1], heading[0])
 
     def draw(self, screen):
+        if not self.is_alive: return
+        
         pygame.draw.circle(screen, self.color, self.pos, self.radius)
-        # pygame.draw.line(screen, (255, 255, 255), self.pos, self.getHeading() * 20 + self.pos, 2)
-        # pygame.draw.line(screen, (255, 255, 255), self.pos, self.getPerp() * 20 + self.pos, 2)
         self.steering.draw(screen)
         
     def readyToAttack(self):
         self.is_attacking = True
+        
+    def die(self):
+        pass
         
     def update(self, dt):
         self.world.tagNeighbors(self)

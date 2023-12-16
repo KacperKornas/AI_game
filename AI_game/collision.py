@@ -20,7 +20,7 @@ class CollisionDetection:
                     enemy.pos -= overlap_vector
         #     # Calculate the distance vector between the player and the obstacle
             distance = obstacle.getPos() - self.player.pos
-            if distance.length() != 0 and distance.length() < obstacle.radius + self.player.size:
+            if distance.length_squared() != 0 and distance.length() < obstacle.radius + self.player.size:
                 # Check if the distance is less than the sum of the radii (collision detected)
                 overlap = (obstacle.radius + self.player.size) - distance.length()
                 # Prevent division by zero if the distance is zero
@@ -37,3 +37,12 @@ class CollisionDetection:
                     overlap = (enemyA.getRadius() + enemyB.getRadius()) - distance.length()
                     overlap_vector = distance.normalize() * overlap
                     enemyA.pos -= overlap_vector
+            
+            distance = (enemyA.getPos() - self.player.getPos()).length_squared()
+            if distance != 0 and distance < ((enemyA.getRadius() + self.player.getSize()) * (enemyA.getRadius() + self.player.getSize())):
+                if enemyA.is_attacking:
+                    self.player.hit()
+                # enemyA.die()
+                self.enemies.remove(enemyA)
+                    
+

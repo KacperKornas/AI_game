@@ -6,6 +6,7 @@ class Player:
     def __init__(self, x, y, screen_width, screen_height):
         # Initialize player attributes
         self.pos = Vector2(x, y)
+        self.health = 20
         self.size = 16
         self.color = (255, 72, 193)
         self.vel = Vector2(0, 0)
@@ -29,6 +30,9 @@ class Player:
         
     def getPos(self):
         return self.pos
+    
+    def getSize(self):
+        return self.size
 
     def update(self):
         self.vel = Vector2(0, 0)
@@ -51,4 +55,9 @@ class Player:
         self.vertices = [direction * self.size + self.pos, 
                          direction.rotate(-120) * self.size + self.pos, 
                          direction.rotate(120) * self.size + self.pos]
+        
+    def hit(self):
+        self.health -= 2
+        print("health remaining: ", self.health)
+        pass
 
