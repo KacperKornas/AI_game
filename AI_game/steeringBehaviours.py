@@ -48,6 +48,9 @@ class SteeringBehaviours:
         # forces' weights
         self.hideWeight = 0.8
         self.wanderWeight = 0.8
+
+        # evade
+        self.evadeWeight = 0.8
         
     def recalculateWeights(self):
         # EXPERIMENTAL :)
@@ -59,7 +62,8 @@ class SteeringBehaviours:
     
     def calculate(self) -> Vector2:
         steering_force = Vector2(0, 0)
-        
+
+        steering_force += self.evade() * self.evadeWeight
         steering_force += self.hide() * self.hideWeight
         steering_force += self.wander() * self.wanderWeight
         
@@ -255,8 +259,19 @@ class SteeringBehaviours:
             return desiredVelocity - self.agent.getVelocity()
         
         return Vector2(0, 0)
-                
-    
+
+    def evade(self):
+        player_pos = self.agent.getWorld().getPlayer().getPos()
+        dist_to_player = (player_pos - self.agent.getPos()).length()
+
+        if dist_to_player < 100:
+            czas_patrzenia_w_przod = dist_to_player / self.agent.getMaxSpeed()
+            przewidywana_pozycja = player_pos + Vector2(0, 0)  # Brak prędkości, używamy tylko pozycji
+
+            return -self.arrive(przewidywana_pozycja, Deceleration.FAST.value)
+
+        return Vector2(0, 0)
+
     def createFeelers(self):
         self.feelers = [
             self.agent.getPos() + self.wallDetectionFeelerLength * self.agent.getHeading(),
